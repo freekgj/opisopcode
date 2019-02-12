@@ -33,4 +33,3 @@ for word in products:
 getpriceproduct(products, category1, subcategory1)
 #getfirstproductwithX(products, "h")
 #gemiddelde_prijs_alle_producten()
-#testest
