@@ -1,4 +1,5 @@
 from pymongo import MongoClient
+
 client = MongoClient('localhost', 27017)
 
 db = client.op_is_op_data
@@ -35,6 +36,12 @@ def gemiddelde_prijs_alle_producten(file):
         total += product
     avg = total / len(listprice)
     return avg
+
+def run(runfile):
+    with open(runfile, "r") as rnf:
+        exec(rnf.read())
+
+run("test.py")
 
 print(get_first_product_price(products, category1, subcategory1))
 print(get_first_product_with_X(products, "h"))
