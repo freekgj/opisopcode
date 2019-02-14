@@ -41,7 +41,10 @@ def run(runfile):
     with open(runfile, "r") as rnf:
         exec(rnf.read())
 
-run("test.py")
+#run("test.py")
+
+import database
+database.main()
 
 print(get_first_product_price(products, category1, subcategory1))
 print(get_first_product_with_X(products, "h"))
