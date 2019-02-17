@@ -1,13 +1,9 @@
 from pymongo import MongoClient
 
-
 client = MongoClient('localhost', 27017)
 database_mongo = client.op_is_op_data
 
 products = database_mongo.products.find()
-
-
-counter = 0
 
 for product in products:
     for catogory in product:
