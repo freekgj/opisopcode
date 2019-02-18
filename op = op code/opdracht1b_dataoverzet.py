@@ -1,35 +1,48 @@
 from pymongo import MongoClient
-
+counter = 0
 client = MongoClient('localhost', 27017)
 database_mongo = client.op_is_op_data
-
 products = database_mongo.products.find()
 
 for product in products:
     for catogory in product:
-        if catogory == "_id":
+        if product["_id"] != "":
             id = product["_id"]
-            print(catogory, product["_id"])
-        if catogory == "brand":
+        else:
+            id = None
+
+        if product["brand"] != "":
             brand = product["brand"]
-            print(catogory, product["brand"])
-        if catogory == "category":
+        else:
+            brand = None
+
+        if product["category"] != "":
             catogoryofproduct = product["category"]
-            print(catogory, product["category"])
-        if catogory == "fast_mover":
+        else:
+            catogoryofproduct = None
+
+        if product["fast_mover"] != "":
             fast_mover = product["fast_mover"]
-            print(catogory, product["fast_mover"])
-        if catogory == "gender":
+        else:
+            fast_mover = None
+
+        if product["gender"] != "":
             gender = product["gender"]
-            print(catogory, product["gender"])
-        if catogory == "herhaalaankopen":
+        else:
+            gender = None
+
+        if product["herhaalaankopen"] != "":
             herhaalaankopen = product["herhaalaankopen"]
-            print(catogory, product["herhaalaankopen"])
-        if catogory == "price":
+        else:
+            herhaalaankopen = None
+
+        if product["price"]["selling_price"] != "":
             selling_price = product["price"]["selling_price"]
-            print("selling_price", product["price"]["selling_price"])
+        else:
+            selling_price = None
 
-    break
+    counter +=1
+    print(counter)
+    import database
+    database.transfer(id, brand, catogoryofproduct, fast_mover, gender, herhaalaankopen, selling_price)
 
-import database
-database.transfer(id, brand, catogoryofproduct, fast_mover, gender, herhaalaankopen, selling_price)
