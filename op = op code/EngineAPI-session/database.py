@@ -14,10 +14,7 @@ def connectsql():
                            )
     return mydb
 
-def executesql(statement, sqldb):
+def getSQLdata(statement,sqldb):
     mycursor = sqldb.cursor()
-    #mycursor.execute("SHOW TABLES")
-    #mycursor.execute("CREATE TABLE products (_id serial primary key, brand VARCHAR(20), category VARCHAR(80), fast_mover BOOLEAN, gender varchar(25), herhaalaankopen BOOLEAN, selling_price INT(15))")
     mycursor.execute(statement)
-
-    sqldb.commit()
+    return mycursor.fetchall()
