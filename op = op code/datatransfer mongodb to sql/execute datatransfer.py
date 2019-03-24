@@ -9,6 +9,3 @@ execute_sessions()
 execute_visitors()
 execute_koppeltabel_order()
 execute_koppeltabel_buids()
-
-
-# FIX execute many per 10000 resultaten invoeren in SQL zoek op SQL execute many

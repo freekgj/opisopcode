@@ -1,11 +1,16 @@
 from database import executesql
 
-count = 0
-row_data = []
-row_count = 0
-
 def getsessions(database):
     return database.sessions.find()
+
+def change_high_comma(item):
+    if type(item) == str:
+        if "'" in item or '"' in item:
+            item = item.replace("'", "")
+            item = item.replace('"', "")
+            return item
+        return item
+    return item
 
 def savesession(session, sqldb):
     if "_id" in session:
@@ -28,23 +33,18 @@ def savesession(session, sqldb):
     else:
         end_session = ""
 
-    global count
-    count += 1
+    sessionsql = '''INSERT INTO sessions (
+                                _id,
+                                start_session, 
+                                end_session, 
+                                buid) 
+                                VALUES (\"%s\", \"%s\", \"%s\", \"%s\")'''
 
-    global row_data
-    row_data.append((id, start_session, end_session, buid))
+    row_data = [id, start_session, end_session, buid]
+    row_data_complete = []
 
-    if count == 1000:
-        sessionsql = '''INSERT INTO sessions (
-                            _id,
-                            start_session, 
-                            end_session, 
-                            buid) 
-                            VALUES (\"%s\", \"%s\", \"%s\", \"%s\")'''
-        global row_count
-        row_count += 1
-        print("session - row " + str(row_count))
-        executesql(sessionsql, row_data, sqldb)
-        row_data = []
-        global count
-        count = 0
+    for item in row_data:
+        checked_item = change_high_comma(item)
+        row_data_complete.append(checked_item)
+
+    executesql(sessionsql, row_data_complete, sqldb)

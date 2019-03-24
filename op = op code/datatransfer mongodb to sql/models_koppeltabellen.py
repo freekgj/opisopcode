@@ -1,18 +1,22 @@
 from database import executesql
 
-count = 0
-row_data = []
-row_count = 0
-
 def getsessions(database):
     return database.sessions.find()
 
 def getvisitors(database):
     return database.visitors.find()
 
-def save_order(session, sqldb):
+def change_high_comma(item):
+    if type(item) == str:
+        if "'" in item or '"' in item:
+            item = item.replace("'", "")
+            item = item.replace('"', "")
+            return item
+        return item
+    return item
 
-    if "buid" in session:
+def save_order(session, sqldb):
+    if ("buid" in session) and session["buid"] != None:
         buid = str(session["buid"][0])
     else:
         return
@@ -21,22 +25,16 @@ def save_order(session, sqldb):
         for product_in_buid in session["order"]["products"]:
             product_ID = str(product_in_buid["id"])
 
-            global count
-            count += 1
+            ordersql = '''INSERT INTO orders (product_ID, buid) VALUES (%s, %s)'''
 
-            global row_data
-            row_data.append((product_ID, buid))
+            row_data = [product_ID, buid]
+            row_data_complete = []
 
-            if count == 1000:
-                ordersql = '''INSERT INTO orders (product_ID, buid) VALUES (\"%s\", \"%s\")'''
+            for item in row_data:
+                checked_item = change_high_comma(item)
+                row_data_complete.append(checked_item)
 
-                global row_count
-                row_count += 1
-                print("orders - row " + str(row_count))
-                executesql(ordersql, row_data, sqldb)
-                row_data = []
-                global count
-                count = 0
+            executesql(ordersql, row_data_complete, sqldb)
 
 def save_buids(visitor, sqldb):
     if "_id" in visitor:
@@ -48,18 +46,13 @@ def save_buids(visitor, sqldb):
         for buid in visitor["buids"]:
             browser_ID = str(buid)
 
-            global count
-            count += 1
+            buidssql = '''INSERT INTO buids (buid, visitor_ID) VALUES (%s, %s)'''
 
-            global row_data
-            row_data.append((browser_ID, visitor_ID))
+            row_data = [browser_ID, visitor_ID]
+            row_data_complete = []
 
-            if count == 1000:
-                buidssql = '''INSERT INTO buids (buid, visitor_ID) VALUES (\"%s\", \"%s\")'''
-                global row_count
-                row_count += 1
-                print("buids - row " + str(row_count))
-                executesql(buidssql, row_data, sqldb)
-                row_data = []
-                global count
-                count = 0
+            for item in row_data:
+                checked_item = change_high_comma(item)
+                row_data_complete.append(checked_item)
+
+            executesql(buidssql, row_data_complete, sqldb)

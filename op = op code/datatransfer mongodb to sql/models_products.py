@@ -1,11 +1,16 @@
 from database import executesql
 
-count = 0
-row_data = []
-row_count = 0
-
 def getproducts(database):
     return database.products.find()
+
+def change_high_comma(item):
+    if type(item) == str:
+        if "'" in item or '"' in item:
+            item = item.replace("'", "")
+            item = item.replace('"', "")
+            return item
+        return item
+    return item
 
 def saveproduct(product, sqldb):
     if "_id" in product:
@@ -48,25 +53,22 @@ def saveproduct(product, sqldb):
     else:
         stock = 0
 
-    global count
-    count += 1
 
-    global row_data
-    row_data.append((id, stock, brand, categoryofproduct, gender, herhaalaankopen, selling_price))
+    productsql = '''INSERT INTO products (
+                                            _id, 
+                                            stock, 
+                                            brand, 
+                                            category,  
+                                            gender, 
+                                            herhaalaankopen, 
+                                            selling_price) VALUES (%s, %s, %s, %s, %s, %s, %s)'''
 
-    if count == 1000:
-        productsql = '''INSERT INTO products (
-                                        _id, 
-                                        stock, 
-                                        brand, 
-                                        category,  
-                                        gender, 
-                                        herhaalaankopen, 
-                                        selling_price) VALUES (\"%s\", %s, \"%s\", \"%s\", \"%s\", %s, %s)'''
-        global row_count
-        row_count += 1
-        print("products - row " + str(row_count))
-        executesql(productsql, row_data, sqldb)
-        row_data = []
-        global count
-        count = 0
+    row_data = [id, stock, brand, categoryofproduct, gender, herhaalaankopen, selling_price]
+    row_data_complete = []
+
+    for item in row_data:
+        checked_item = change_high_comma(item)
+        row_data_complete.append(checked_item)
+
+
+    executesql(productsql, row_data_complete, sqldb)

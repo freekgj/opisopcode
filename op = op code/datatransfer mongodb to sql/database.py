@@ -1,6 +1,10 @@
 from pymongo import MongoClient
 import pymysql
 
+row_data = []
+row_count = 0
+count = 0
+
 def connectmongo():
     client = MongoClient('localhost', 27017)
     database_mongo = client.op_is_op_data
@@ -15,9 +19,20 @@ def connectsql():
     return mydb
 
 def executesql(statement, data, sqldb):
-    mycursor = sqldb.cursor()
-    #mycursor.execute("SHOW TABLES")
-    #mycursor.execute("CREATE TABLE products (_id serial primary key, brand VARCHAR(20), category VARCHAR(80), fast_mover BOOLEAN, gender varchar(25), herhaalaankopen BOOLEAN, selling_price INT(15))")
-    mycursor.executemany(statement, data)
+    global row_data
+    row_data.append(data)
+    global count
+    count += 1
+    if count == 1000:
+        push(statement, sqldb)
+        count = 0
+        global row_count
+        row_count += 1
+        print("{} - row ".format(statement[12]) + str(row_count))
 
+def push(statement, sqldb):
+    global row_data
+    mycursor = sqldb.cursor()
+    mycursor.executemany(statement, row_data)
     sqldb.commit()
+    row_data = []
